@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.dynamicfeatures.R;
+import com.example.dynamicfeatures.databinding.ActivityMainBinding;
 import com.example.dynamicfeatures.viewmodel.MainViewModel;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -18,15 +19,18 @@ public class MainActivity extends AppCompatActivity {
 
     private MainViewModel viewModel;
     private MaterialTextView tvDisplay;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-
-        initViews();
+        //initViews(); // using findViewById
+        setupViews();
         initObservers();
     }
 
@@ -34,12 +38,14 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getUrls().observe(this, new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> urls) {
-                tvDisplay.setText(urls.toString());
+                //tvDisplay.setText(urls.toString()); // using findViewById
+                binding.tvDisplay.setText(urls.toString());
             }
         });
 
         viewModel.getErrorMessage().observe(this, errorMessage -> {
-            tvDisplay.setText(errorMessage);
+            //tvDisplay.setText(errorMessage); // using findViewById
+            binding.tvDisplay.setText(errorMessage);
         });
     }
 
@@ -53,6 +59,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         tvDisplay = findViewById(R.id.tv_display);
+    }
+
+    private void setupViews() {
+        binding.btnFetch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String countString = ((AppCompatEditText) findViewById(R.id.et_count)).getText().toString();
+                if (!countString.isEmpty())
+                    viewModel.fetchShibes(Integer.parseInt(countString));
+            }
+        });
     }
 }
 
