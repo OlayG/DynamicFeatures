@@ -19,15 +19,18 @@ public class RetrofitInstance {
 
     }
 
+    private static Retrofit getRetrofit() {
+        return new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(MoshiConverterFactory.create())
+                .client(getClient())
+                .build();
+    }
+
     // Step 3: Public method to access the new instance
     public static ShibeService getInstance() {
         if (INSTANCE == null)
-            INSTANCE = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create())
-                    .client(getClient())
-                    .build()
-                    .create(ShibeService.class);
+            INSTANCE = getRetrofit().create(ShibeService.class);
 
         return INSTANCE;
     }
