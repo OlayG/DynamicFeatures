@@ -66,6 +66,7 @@ public class ShibeAdapter extends RecyclerView.Adapter<ShibeAdapter.ShibeViewHol
 
         public void setUrl(String url) {
             binding.tvUrl.setText(url);
+            //binding.ivImage.loadImage(url);
         }
 
     }
