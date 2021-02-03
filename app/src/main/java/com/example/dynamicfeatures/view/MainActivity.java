@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.dynamicfeatures.R;
+import com.example.dynamicfeatures.adapter.ShibeAdapter;
 import com.example.dynamicfeatures.databinding.ActivityMainBinding;
 import com.example.dynamicfeatures.viewmodel.MainViewModel;
 import com.google.android.material.textview.MaterialTextView;
@@ -18,7 +20,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private MainViewModel viewModel;
-    private MaterialTextView tvDisplay;
     private ActivityMainBinding binding;
 
     @Override
@@ -29,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        //initViews(); // using findViewById
         setupViews();
         initObservers();
     }
@@ -38,27 +38,14 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getUrls().observe(this, new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> urls) {
-                //tvDisplay.setText(urls.toString()); // using findViewById
-                binding.tvDisplay.setText(urls.toString());
+                ShibeAdapter shibeAdapter = new ShibeAdapter(urls);
+                binding.rvImageList.setAdapter(shibeAdapter);
             }
         });
 
         viewModel.getErrorMessage().observe(this, errorMessage -> {
-            //tvDisplay.setText(errorMessage); // using findViewById
-            binding.tvDisplay.setText(errorMessage);
-        });
-    }
 
-    private void initViews() {
-        findViewById(R.id.btn_fetch).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String countString = ((AppCompatEditText) findViewById(R.id.et_count)).getText().toString();
-                if (!countString.isEmpty())
-                    viewModel.fetchShibes(Integer.parseInt(countString));
-            }
         });
-        tvDisplay = findViewById(R.id.tv_display);
     }
 
     private void setupViews() {
@@ -70,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
                     viewModel.fetchShibes(Integer.parseInt(countString));
             }
         });
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        binding.rvImageList.setLayoutManager(linearLayoutManager);
     }
 }
 
