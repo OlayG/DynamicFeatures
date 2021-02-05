@@ -12,13 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.dynamicfeatures.R;
 import com.example.dynamicfeatures.adapter.ShibeAdapter;
+import com.example.dynamicfeatures.adapter.ShibeClickListener;
 import com.example.dynamicfeatures.databinding.ActivityShibeBinding;
 import com.example.dynamicfeatures.utils.Constants;
 import com.example.dynamicfeatures.viewmodel.MainViewModel;
 
 import java.util.List;
 
-public class ShibeActivity extends AppCompatActivity {
+public class ShibeActivity extends AppCompatActivity implements ShibeClickListener {
 
     private MainViewModel viewModel;
     private ActivityShibeBinding binding;
@@ -47,7 +48,7 @@ public class ShibeActivity extends AppCompatActivity {
         viewModel.getUrls().observe(this, new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> urls) {
-                ShibeAdapter shibeAdapter = new ShibeAdapter(urls);
+                ShibeAdapter shibeAdapter = new ShibeAdapter(urls, ShibeActivity.this);
                 binding.rvImageList.setAdapter(shibeAdapter);
             }
         });
@@ -68,6 +69,22 @@ public class ShibeActivity extends AppCompatActivity {
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.rvImageList.setLayoutManager(linearLayoutManager);
+    }
+
+    /**
+     * With Java 8, I don't have to implement the listener i can just pass a method with the same parameters
+     * as the Overriding method
+     * Ex: ShibeActivity.this::iThinkIWasClicked
+     *
+     * @param position the current item position of the items in the recyclerview
+     */
+    public void iThinkIWasClicked(int position) {
+
+    }
+
+    @Override
+    public void itemClicked(int position) {
+        Toast.makeText(this, "" + position, Toast.LENGTH_SHORT).show();
     }
 }
 

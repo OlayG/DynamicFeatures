@@ -1,6 +1,7 @@
 package com.example.dynamicfeatures.adapter;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -28,9 +29,11 @@ import java.util.List;
  */
 public class ShibeAdapter extends RecyclerView.Adapter<ShibeAdapter.ShibeViewHolder> {
     private final List<String> urls;
+    private ShibeClickListener listener;
 
-    public ShibeAdapter(List<String> urls) {
+    public ShibeAdapter(List<String> urls, ShibeClickListener listener) {
         this.urls = urls;
+        this.listener = listener;
     }
 
     @NonNull
@@ -41,7 +44,7 @@ public class ShibeAdapter extends RecyclerView.Adapter<ShibeAdapter.ShibeViewHol
                 parent,
                 false
         );
-        return new ShibeViewHolder(binding);
+        return new ShibeViewHolder(binding, listener);
     }
 
     @Override
@@ -55,17 +58,30 @@ public class ShibeAdapter extends RecyclerView.Adapter<ShibeAdapter.ShibeViewHol
         return urls.size();
     }
 
+    public void setListener(ShibeClickListener listener) {
+        this.listener = listener;
+    }
+
     static class ShibeViewHolder extends RecyclerView.ViewHolder {
 
         private final ItemImageBinding binding;
+        private final ShibeClickListener listener;
 
-        public ShibeViewHolder(@NonNull ItemImageBinding binding) {
+        public ShibeViewHolder(@NonNull ItemImageBinding binding, ShibeClickListener listener) {
             super(binding.getRoot());
             this.binding = binding;
+            this.listener = listener;
         }
 
         public void setUrl(String url) {
             binding.tvUrl.setText(url);
+            binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null)
+                        listener.itemClicked(getAdapterPosition());
+                }
+            });
             //binding.ivImage.loadImage(url);
         }
 
